@@ -1,6 +1,6 @@
-This directory is where you'll write all of your code!
+This repo contains TsarN's portfolio and STEP projects.
 
-By default it contains a barebones web app. To run a local server, execute this
+To run a local server, execute this
 command:
 
 ```bash
