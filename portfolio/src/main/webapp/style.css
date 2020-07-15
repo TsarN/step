@@ -19,6 +19,37 @@ h1 > small, h2 > small, h3 > small {
   font-family: 'Roboto Mono', monospace;
 }
 
+.navbar {
+  width: 100%;
+  font-size: 1.25em;
+  background-color: #eee;
+  box-sizing: border-box;
+  padding: 1em;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.navbar > a, .navbar > a:visited {
+  color: inherit;
+  color: #33c;
+}
+
+@media (max-width: 600px) {
+  .navbar {
+    padding: 1em 0.5em;
+  }
+}
+
+@media (max-width: 370px) {
+  .navbar {
+    font-size: 1em;
+  }
+
+  h1 {
+    font-size: 1.75em;
+  }
+}
+
 @media (prefers-color-scheme: dark) {
   body {
     color: white;
@@ -31,5 +62,18 @@ h1 > small, h2 > small, h3 > small {
 
   a:visited {
     color: #ccf;
+  }
+
+  h1 > small, h2 > small, h3 > small {
+    color: #aaa;
+  }
+
+  .navbar {
+    background-color: #555;
+  }
+
+  .navbar > a, .navbar > a:visited {
+    color: inherit;
+    color: #5bf;
   }
 }
