@@ -34,6 +34,13 @@ h1 > small, h2 > small, h3 > small {
   color: #33c;
 }
 
+@media (max-width: 600px) {
+  .navbar {
+    font-size: 1.25em;
+    padding: 1em 0.5em;
+  }
+}
+
 @media (prefers-color-scheme: dark) {
   body {
     color: white;
