@@ -21,7 +21,7 @@ h1 > small, h2 > small, h3 > small {
 
 .navbar {
   width: 100%;
-  font-size: 1.5em;
+  font-size: 1.25em;
   background-color: #eee;
   box-sizing: border-box;
   padding: 1em;
@@ -36,8 +36,17 @@ h1 > small, h2 > small, h3 > small {
 
 @media (max-width: 600px) {
   .navbar {
-    font-size: 1.25em;
     padding: 1em 0.5em;
+  }
+}
+
+@media (max-width: 370px) {
+  .navbar {
+    font-size: 1em;
+  }
+
+  h1 {
+    font-size: 1.75em;
   }
 }
 
