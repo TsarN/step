@@ -10,12 +10,17 @@
     <script src="script.js"></script>
 </head>
 
-<body>
+<body onload="makeImagesClickable()">
+    <div id="image-modal" class="modal" style="display: none;" onclick="closeImageModal()">
+        <img id="image-modal-img" class="modal-content" />
+    </div>
+
     <div class="navbar">
         <a href="index.html#about">About me</a>
         <a href="index.html#projects">Projects</a>
         <a href="index.html#contacts">Contacts</a>
     </div>
+
     <div id="content">
         <h1>This is a Title of My Beautiful Post</h1>
         <div class="light">Posted on July 16, 2020</div>
