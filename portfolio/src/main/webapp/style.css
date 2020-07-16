@@ -99,7 +99,7 @@ img.modal-content {
     background: #444;
   }
 
-  .light {
+  .light, figcaption {
     color: #eee;
   }
 
