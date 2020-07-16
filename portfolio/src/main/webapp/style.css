@@ -34,6 +34,11 @@ h1 > small, h2 > small, h3 > small {
   color: #33c;
 }
 
+.posted-on {
+  color: #555;
+  font-weight: 300;
+}
+
 @media (max-width: 600px) {
   .navbar {
     padding: 1em 0.5em;
@@ -54,6 +59,10 @@ h1 > small, h2 > small, h3 > small {
   body {
     color: white;
     background: #444;
+  }
+
+  .posted-on {
+    color: #eee;
   }
 
   a:link {
