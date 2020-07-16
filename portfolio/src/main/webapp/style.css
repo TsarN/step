@@ -34,9 +34,14 @@ h1 > small, h2 > small, h3 > small {
   color: #33c;
 }
 
-.posted-on {
+.light, figcaption {
   color: #555;
   font-weight: 300;
+}
+
+figure img {
+  border-radius: 4px;
+  width: 100%;
 }
 
 @media (max-width: 600px) {
@@ -61,7 +66,7 @@ h1 > small, h2 > small, h3 > small {
     background: #444;
   }
 
-  .posted-on {
+  .light {
     color: #eee;
   }
 
