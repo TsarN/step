@@ -34,6 +34,45 @@ h1 > small, h2 > small, h3 > small {
   color: #33c;
 }
 
+.light, figcaption {
+  color: #555;
+  font-weight: 300;
+}
+
+figure img {
+  border-radius: 4px;
+  width: 100%;
+}
+
+.modal {
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  padding-top: 50px;
+  background: rgba(0, 0, 0, .3);
+}
+
+.modal-content {
+  margin: auto;
+  display: block;
+  max-width: 80%;
+  animation-name: zoom;
+  animation-duration: 0.25s;
+}
+
+img.modal-content {
+  border-radius: 5px;
+}
+
+@keyframes zoom {
+  from {transform:scale(0)}
+  to {transform:scale(1)}
+}
+
 @media (max-width: 600px) {
   .navbar {
     padding: 1em 0.5em;
@@ -54,6 +93,14 @@ h1 > small, h2 > small, h3 > small {
   body {
     color: white;
     background: #444;
+  }
+
+  .modal {
+    background: #444;
+  }
+
+  .light, figcaption {
+    color: #eee;
   }
 
   a:link {
