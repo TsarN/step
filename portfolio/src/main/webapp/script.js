@@ -40,3 +40,12 @@ function makeImagesClickable() {
         });
     }
 }
+
+/*
+ * Fetch comments from server and display them in #comments
+ */
+async function loadComments() {
+    const comments = await fetch("/commentsData");
+    const container = document.getElementById("comments");
+    container.innerText = await comments.text();
+}

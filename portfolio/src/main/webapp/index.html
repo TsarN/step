@@ -10,7 +10,7 @@
   <script src="script.js"></script>
 </head>
 
-<body>
+<body onload="loadComments()">
   <div class="navbar">
     <a href="#about">About me</a>
     <a href="#projects">Projects</a>
@@ -127,6 +127,13 @@
       <li><a href="https://vk.com/tsarn">VK</a></li>
       <li><a href="https://github.com/tsarn">GitHub</a></li>
     </ul>
+
+    <hr />
+
+    Leave a comment!
+
+    <div class="comments" id="comments">
+    </div>
   </div>
 </body>
 
