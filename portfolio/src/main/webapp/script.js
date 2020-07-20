@@ -47,5 +47,11 @@ function makeImagesClickable() {
 async function loadComments() {
     const comments = await fetch("/commentsData");
     const container = document.getElementById("comments");
-    container.innerText = await comments.text();
+    container.innerHTML = "";
+
+    for (const comment of await comments.json()) {
+        const element = document.createElement("p");
+        element.innerText = comment;
+        container.appendChild(element);
+    }
 }

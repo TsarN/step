@@ -15,18 +15,41 @@
 package com.google.sps.servlets;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/commentsData")
 public class DataServlet extends HttpServlet {
+  private static List<String> comments;
+  
+  static {
+    comments = new ArrayList<>();
+    comments.add("That's an interesting website you got here");
+    comments.add("Maybe you could post a link to your youtube channel??");
+    comments.add("А мне вот интересно: работает ли юникод корректно?");
+    comments.add("And what if I use characters outside of 𝔹𝕄ℙ? 😳");
+    comments.add("<img src=x onerror=alert(1)>");
+  }
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setContentType("text/plain;");
-    response.getWriter().println("Hello, Nikita!");
+    response.setCharacterEncoding("UTF-8");
+    response.setContentType("text/json");
+
+    GsonBuilder builder = new GsonBuilder();
+    builder.disableHtmlEscaping();
+
+    Gson gson = builder.create();
+    String json = gson.toJson(comments);
+    response.getWriter().write(json);
   }
 }
