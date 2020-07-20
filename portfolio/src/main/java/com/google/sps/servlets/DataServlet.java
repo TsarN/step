@@ -31,7 +31,7 @@ import com.google.gson.GsonBuilder;
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/commentsData")
 public class DataServlet extends HttpServlet {
-  private static final List<String> comments = Collections.unmodifiableList(Arrays.asList(
+  private static final List<String> COMMENTS = Collections.unmodifiableList(Arrays.asList(
     "That's an interesting website you got here",
     "Maybe you could post a link to your youtube channel??",
     "А мне вот интересно: работает ли юникод корректно?",
@@ -48,7 +48,7 @@ public class DataServlet extends HttpServlet {
     builder.disableHtmlEscaping();
 
     Gson gson = builder.create();
-    String json = gson.toJson(comments);
+    String json = gson.toJson(COMMENTS);
     response.getWriter().write(json);
   }
 }
