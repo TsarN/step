@@ -28,16 +28,10 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-/** Servlet that returns some example content. TODO: modify this file to handle comments data */
+/** Servlet that returns some example content. */
 @WebServlet("/commentsData")
 public class DataServlet extends HttpServlet {
-  private static final List<String> COMMENTS = Collections.unmodifiableList(Arrays.asList(
-    "That's an interesting website you got here",
-    "Maybe you could post a link to your youtube channel??",
-    "А мне вот интересно: работает ли юникод корректно?",
-    "And what if I use characters outside of 𝔹𝕄ℙ? 😳",
-    "<img src=x onerror=alert(1)>"
-  ));
+  private List<String> comments = new ArrayList<>();
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -48,7 +42,21 @@ public class DataServlet extends HttpServlet {
     builder.disableHtmlEscaping();
 
     Gson gson = builder.create();
-    String json = gson.toJson(COMMENTS);
+    String json = gson.toJson(comments);
     response.getWriter().write(json);
+  }
+
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    String comment = request.getParameter("comment");
+
+    if (comment == null || comment.trim().isEmpty()) {
+      response.sendError(HttpServletResponse.SC_BAD_REQUEST, "'comment' parameter must not be empty");
+      return;
+    }
+
+    this.comments.add(comment);
+
+    response.sendRedirect("/");
   }
 }
