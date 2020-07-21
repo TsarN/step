@@ -48,7 +48,7 @@ async function loadComments() {
     const amountSelector = document.getElementById("commentAmount");
     const amount = amountSelector.options[amountSelector.selectedIndex].value;
 
-    const comments = await fetch("/commentsData?amount=" + amount);
+    const comments = await fetch("/commentList?amount=" + amount);
     const container = document.getElementById("comments");
     container.innerHTML = "";
 

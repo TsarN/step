@@ -15,10 +15,6 @@
 package com.google.sps.servlets;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -28,43 +24,10 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.PreparedQuery;
-import com.google.appengine.api.datastore.Query;
-import com.google.appengine.api.datastore.Query.SortDirection;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
-/** Servlet that returns some example content. */
-@WebServlet("/commentsData")
-public class DataServlet extends HttpServlet {
-  @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setCharacterEncoding("UTF-8");
-    response.setContentType("text/json");
-
-    int amount = Integer.parseInt(request.getParameter("amount"));
-
-    GsonBuilder builder = new GsonBuilder();
-    builder.disableHtmlEscaping();
-    Gson gson = builder.create();
-
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    Query query = new Query("comment").addSort("timestamp", SortDirection.DESCENDING);
-    PreparedQuery results = datastore.prepare(query);
-    
-    List<String> comments = new ArrayList<>();
-
-    for (Entity entity : results.asIterable()) {
-      if (comments.size() == amount) {
-        break;
-      }
-      comments.add((String)entity.getProperty("text"));
-    }
-
-    String json = gson.toJson(comments);
-    response.getWriter().write(json);
-  }
-
+/** Servlet that returns comments. */
+@WebServlet("/commentPost")
+public class CommentPostServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String comment = request.getParameter("comment");
