@@ -45,7 +45,10 @@ function makeImagesClickable() {
  * Fetch comments from server and display them in #comments
  */
 async function loadComments() {
-    const comments = await fetch("/commentsData");
+    const amountSelector = document.getElementById("commentAmount");
+    const amount = amountSelector.options[amountSelector.selectedIndex].value;
+
+    const comments = await fetch("/commentsData?amount=" + amount);
     const container = document.getElementById("comments");
     container.innerHTML = "";
 

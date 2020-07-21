@@ -137,6 +137,14 @@
         <textarea placeholder="Leave a comment" name="comment" required="required"></textarea>
         <button type="submit">Submit</button>
       </form>
+      <div>
+        <select id="commentAmount" onchange="loadComments()">
+          <option value="5" selected="selected">Show last 5 comments</option>
+          <option value="15">Show last 15 comments</option>
+          <option value="50">Show last 50 comments</option>
+          <option value="-1">Show all comments</option>
+        </select>
+      </div>
     </div>
 
     <div class="comments" id="comments">

@@ -42,6 +42,8 @@ public class DataServlet extends HttpServlet {
     response.setCharacterEncoding("UTF-8");
     response.setContentType("text/json");
 
+    int amount = Integer.parseInt(request.getParameter("amount"));
+
     GsonBuilder builder = new GsonBuilder();
     builder.disableHtmlEscaping();
     Gson gson = builder.create();
@@ -53,6 +55,9 @@ public class DataServlet extends HttpServlet {
     List<String> comments = new ArrayList<>();
 
     for (Entity entity : results.asIterable()) {
+      if (comments.size() == amount) {
+        break;
+      }
       comments.add((String)entity.getProperty("text"));
     }
 
