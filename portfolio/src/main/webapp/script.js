@@ -1,3 +1,5 @@
+"use strict";
+
 /*
  * Open image modal.
  *
@@ -22,7 +24,6 @@ function closeImageModal() {
     const img = document.getElementById("image-modal-img");
 
     modal.style.display = "none";
-    img.src = null;
     img.alt = "";
 }
 
