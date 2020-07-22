@@ -93,5 +93,17 @@ async function loadComments() {
  * Once the comment is deleted, reload list of comments
  */
 async function deleteComment(commentId) {
-    // unimplemented
+    const result = await fetch( "/commentDelete", {
+        method: "POST",
+        body: "id=" + commentId,
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        }
+    });
+
+    if (!result.ok) {
+        console.warn("Failed to delete comment " + commentId);
+    }
+
+    await loadComments();
 }
