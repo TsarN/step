@@ -32,28 +32,17 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.sps.Comment;
+import com.google.sps.SafeParser;
 
 /** Servlet that returns comments. */
 @WebServlet("/commentList")
 public class CommentListServlet extends HttpServlet {
-  private static int parseInt(String string, int fallback) {
-    if (string == null) {
-      return fallback;
-    }
-
-    try {
-      return Integer.parseInt(string);
-    } catch (NumberFormatException e) {
-      return fallback;
-    }
-  }
-
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setCharacterEncoding("UTF-8");
     response.setContentType("text/json");
 
-    int amount = parseInt(request.getParameter("amount"), -1);
+    int amount = SafeParser.parseInt(request.getParameter("amount"), -1);
 
     GsonBuilder builder = new GsonBuilder();
     builder.disableHtmlEscaping();
