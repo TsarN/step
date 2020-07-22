@@ -70,10 +70,28 @@ async function loadComments() {
         const textElement = document.createElement("div");
         textElement.innerText = comment.text;
 
+        const deleteLink = document.createElement("a");
+        deleteLink.href = "#";
+        deleteLink.innerText = "delete";
+        deleteLink.className = "delete-link";
+        deleteLink.addEventListener("click", (e) => {
+            deleteComment(comment.id);
+            e.preventDefault();
+        });
+
         commentElement.appendChild(authorElement);
+        commentElement.appendChild(deleteLink);
         commentElement.appendChild(textElement);
 
         container.appendChild(commentElement);
         isFirst = false;
     }
+}
+
+/*
+ * Delete a comment identified by its id.
+ * Once the comment is deleted, reload list of comments
+ */
+async function deleteComment(commentId) {
+    // unimplemented
 }
