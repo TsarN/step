@@ -31,6 +31,7 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.sps.Comment;
 
 /** Servlet that returns comments. */
 @WebServlet("/commentList")
@@ -62,13 +63,18 @@ public class CommentListServlet extends HttpServlet {
     Query query = new Query("comment").addSort("timestamp", SortDirection.DESCENDING);
     PreparedQuery results = datastore.prepare(query);
     
-    List<String> comments = new ArrayList<>();
+    List<Comment> comments = new ArrayList<>();
 
     for (Entity entity : results.asIterable()) {
       if (comments.size() == amount) {
         break;
       }
-      comments.add((String)entity.getProperty("text"));
+
+      comments.add(new Comment(
+        (String)entity.getProperty("author"),
+        (String)entity.getProperty("text"),
+        (long)entity.getProperty("timestamp")
+      ));
     }
 
     String json = gson.toJson(comments);

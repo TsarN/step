@@ -105,6 +105,12 @@ textarea {
   overflow: scroll;
 }
 
+.comment-separator {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  border-top: 1px solid #aaa;
+}
+
 @keyframes zoom {
   from {transform:scale(0)}
   to {transform:scale(1)}

@@ -52,10 +52,28 @@ async function loadComments() {
     const comments = await fetch("/commentList?amount=" + amount);
     const container = document.getElementById("comments");
     container.innerHTML = "";
+    let isFirst = true;
 
     for (const comment of await comments.json()) {
-        const element = document.createElement("p");
-        element.innerText = comment;
-        container.appendChild(element);
+        if (!isFirst) {
+            const separator = document.createElement("hr");
+            separator.className = "comment-separator";
+            container.append(separator);
+        }
+        const commentElement = document.createElement("div");
+        commentElement.className = "comment";
+        
+        const authorElement = document.createElement("div");
+        authorElement.className = "light";
+        authorElement.innerText = (comment.author || "unknown") + " writes:";
+
+        const textElement = document.createElement("div");
+        textElement.innerText = comment.text;
+
+        commentElement.appendChild(authorElement);
+        commentElement.appendChild(textElement);
+
+        container.appendChild(commentElement);
+        isFirst = false;
     }
 }

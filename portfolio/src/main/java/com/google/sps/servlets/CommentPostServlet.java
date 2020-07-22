@@ -31,14 +31,21 @@ public class CommentPostServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String comment = request.getParameter("comment");
+    String author = request.getParameter("author");
 
     if (comment == null || comment.trim().isEmpty()) {
       response.sendError(HttpServletResponse.SC_BAD_REQUEST, "'comment' parameter must not be empty");
       return;
     }
 
+    if (author == null || author.trim().isEmpty()) {
+      response.sendError(HttpServletResponse.SC_BAD_REQUEST, "'author' parameter must not be empty");
+      return;
+    }
+
     Entity commentEntity = new Entity("comment");
     commentEntity.setProperty("text", comment);
+    commentEntity.setProperty("author", author);
     commentEntity.setProperty("timestamp", System.currentTimeMillis());
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
