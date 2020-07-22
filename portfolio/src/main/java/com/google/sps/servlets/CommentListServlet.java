@@ -17,6 +17,7 @@ package com.google.sps.servlets;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.time.Instant;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -64,7 +65,7 @@ public class CommentListServlet extends HttpServlet {
         KeyFactory.keyToString(entity.getKey()),
         (String)entity.getProperty("author"),
         (String)entity.getProperty("text"),
-        (long)entity.getProperty("timestamp")
+        Instant.ofEpochMilli((long)entity.getProperty("timestamp"))
       ));
     }
 

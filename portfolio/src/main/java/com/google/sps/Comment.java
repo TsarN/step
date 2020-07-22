@@ -1,12 +1,14 @@
 package com.google.sps;
 
+import java.time.Instant;
+
 public class Comment {
     private final String id;
     private final String author;
     private final String text;
-    private final long timestamp;
+    private final Instant timestamp;
 
-    public Comment(final String id, final String author, final String text, final long timestamp) {
+    public Comment(final String id, final String author, final String text, final Instant timestamp) {
         this.id = id;
         this.author = author;
         this.text = text;
@@ -25,7 +27,7 @@ public class Comment {
         return this.text;
     }
 
-    public long getTimestamp() {
+    public Instant getTimestamp() {
         return this.timestamp;
     }
 }
