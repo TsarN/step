@@ -134,9 +134,13 @@
 
     <div>
       <form method="POST" action="/commentPost">
+        <input type="text" placeholder="Your name" name="author" required="required" />
         <textarea placeholder="Leave a comment" name="comment" required="required"></textarea>
         <button type="submit">Submit</button>
       </form>
+      
+      <hr />
+      
       <div>
         <select id="commentAmount" onchange="loadComments()">
           <option value="5" selected="selected">Show last 5 comments</option>

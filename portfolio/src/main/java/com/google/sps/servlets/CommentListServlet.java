@@ -26,33 +26,24 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.sps.Comment;
+import com.google.sps.SafeParser;
 
 /** Servlet that returns comments. */
 @WebServlet("/commentList")
 public class CommentListServlet extends HttpServlet {
-  private static int parseInt(String string, int fallback) {
-    if (string == null) {
-      return fallback;
-    }
-
-    try {
-      return Integer.parseInt(string);
-    } catch (NumberFormatException e) {
-      return fallback;
-    }
-  }
-
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setCharacterEncoding("UTF-8");
     response.setContentType("text/json");
 
-    int amount = parseInt(request.getParameter("amount"), -1);
+    long amount = SafeParser.parseInt(request.getParameter("amount"), -1);
 
     GsonBuilder builder = new GsonBuilder();
     builder.disableHtmlEscaping();
@@ -62,13 +53,19 @@ public class CommentListServlet extends HttpServlet {
     Query query = new Query("comment").addSort("timestamp", SortDirection.DESCENDING);
     PreparedQuery results = datastore.prepare(query);
     
-    List<String> comments = new ArrayList<>();
+    List<Comment> comments = new ArrayList<>();
 
     for (Entity entity : results.asIterable()) {
       if (comments.size() == amount) {
         break;
       }
-      comments.add((String)entity.getProperty("text"));
+
+      comments.add(new Comment(
+        KeyFactory.keyToString(entity.getKey()),
+        (String)entity.getProperty("author"),
+        (String)entity.getProperty("text"),
+        (long)entity.getProperty("timestamp")
+      ));
     }
 
     String json = gson.toJson(comments);

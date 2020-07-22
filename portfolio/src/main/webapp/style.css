@@ -3,8 +3,11 @@ body {
   max-width: 650px;
   margin: 40px auto;
   padding: 0 10px;
-  font: 18px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   color: #444;
+}
+
+body, textarea {
+  font: 18px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
 h1, h2, h3 {
@@ -68,8 +71,48 @@ img.modal-content {
   border-radius: 5px;
 }
 
-textarea, button {
+form, textarea, button {
   display: block;
+}
+
+textarea, input[type=text], select {
+  border-radius: 3px;
+  border-style: solid;
+  border-width: 2px;
+  border-color: #aaa;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 1em;
+  padding: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+button {
+  border-radius: 3px;
+  border-style: solid;
+  border-width: 2px;
+  border-color: #aaa;
+  padding: 0.5em 1em;
+  text-align: center;
+  font-size: 1em;
+  font-weight: bold;
+  background: white;
+}
+
+textarea {
+  min-height: 6em;
+  resize: vertical;
+  overflow: scroll;
+}
+
+.comment-separator {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  border-top: 1px solid #aaa;
+}
+
+.delete-link {
+  float: right;
 }
 
 @keyframes zoom {

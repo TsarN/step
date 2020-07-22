@@ -52,10 +52,58 @@ async function loadComments() {
     const comments = await fetch("/commentList?amount=" + amount);
     const container = document.getElementById("comments");
     container.innerHTML = "";
+    let isFirst = true;
 
     for (const comment of await comments.json()) {
-        const element = document.createElement("p");
-        element.innerText = comment;
-        container.appendChild(element);
+        if (!isFirst) {
+            const separator = document.createElement("hr");
+            separator.className = "comment-separator";
+            container.append(separator);
+        }
+        const commentElement = document.createElement("div");
+        commentElement.className = "comment";
+        
+        const authorElement = document.createElement("div");
+        authorElement.className = "light";
+        authorElement.innerText = (comment.author || "unknown") + " writes:";
+
+        const textElement = document.createElement("div");
+        textElement.innerText = comment.text;
+
+        const deleteLink = document.createElement("a");
+        deleteLink.href = "#";
+        deleteLink.innerText = "delete";
+        deleteLink.className = "delete-link";
+        deleteLink.addEventListener("click", (e) => {
+            deleteComment(comment.id);
+            e.preventDefault();
+        });
+
+        commentElement.appendChild(authorElement);
+        commentElement.appendChild(deleteLink);
+        commentElement.appendChild(textElement);
+
+        container.appendChild(commentElement);
+        isFirst = false;
     }
+}
+
+/*
+ * Delete a comment identified by its id.
+ * Once the comment is deleted, reload list of comments
+ */
+async function deleteComment(commentId) {
+    const result = await fetch( "/commentDelete", {
+        method: "POST",
+        body: "id=" + commentId,
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        }
+    });
+
+    if (!result.ok) {
+        console.warn("Failed to delete comment " + commentId);
+    }
+
+    await loadComments();
 }
