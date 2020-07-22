@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
@@ -42,7 +43,7 @@ public class CommentListServlet extends HttpServlet {
     response.setCharacterEncoding("UTF-8");
     response.setContentType("text/json");
 
-    int amount = SafeParser.parseInt(request.getParameter("amount"), -1);
+    long amount = SafeParser.parseInt(request.getParameter("amount"), -1);
 
     GsonBuilder builder = new GsonBuilder();
     builder.disableHtmlEscaping();
@@ -60,7 +61,7 @@ public class CommentListServlet extends HttpServlet {
       }
 
       comments.add(new Comment(
-        (long)entity.getKey().getId(),
+        KeyFactory.keyToString(entity.getKey()),
         (String)entity.getProperty("author"),
         (String)entity.getProperty("text"),
         (long)entity.getProperty("timestamp")
