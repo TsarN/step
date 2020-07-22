@@ -15,6 +15,7 @@
 package com.google.sps.servlets;
 
 import java.io.IOException;
+import java.time.Instant;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -46,7 +47,7 @@ public class CommentPostServlet extends HttpServlet {
     Entity commentEntity = new Entity("comment");
     commentEntity.setProperty("text", comment);
     commentEntity.setProperty("author", author);
-    commentEntity.setProperty("timestamp", System.currentTimeMillis());
+    commentEntity.setProperty("timestamp", Instant.now().toEpochMilli());
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(commentEntity);
