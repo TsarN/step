@@ -56,6 +56,41 @@ public class TestCommentListServlet extends ServletTest {
 
     new CommentListServlet().doGet(request, response);
     writer.flush();
-    assertTrue(stringWriter.toString().contains("a test comment"));
+    String response = stringWriter.toString();
+    assertTrue(response.contains("a test comment"));
+    assertTrue(response.contains("anonymous"));
+  }
+
+  @Test
+  public void testCommentOrder() throws Exception {
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+    Entity comment1 = new Entity("comment");
+    comment1.setProperty("text", "one");
+    comment1.setProperty("author", "alice");
+    comment1.setProperty("timestamp", 1_000_001_000L);
+    datastore.put(comment1);
+
+    Entity comment2 = new Entity("comment");
+    comment2.setProperty("text", "two");
+    comment2.setProperty("author", "bob");
+    comment2.setProperty("timestamp", 1_000_003_000L);
+    datastore.put(comment2);
+
+    Entity comment3 = new Entity("comment");
+    comment3.setProperty("text", "three");
+    comment3.setProperty("author", "charlie");
+    comment3.setProperty("timestamp", 1_000_002_000L);
+    datastore.put(comment3);
+
+    new CommentListServlet().doGet(request, response);
+    writer.flush();
+    String response = stringWriter.toString();
+    assertTrue(response.contains("one"));
+    assertTrue(response.contains("two"));
+    assertTrue(response.contains("three"));
+
+    assertTrue(response.indexOf("one") > response.indexOf("three"));
+    assertTrue(response.indexOf("three") > response.indexOf("two"));
   }
 }
