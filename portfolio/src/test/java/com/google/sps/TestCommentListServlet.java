@@ -15,6 +15,8 @@
 package com.google.sps;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.when;
+
 import org.junit.Test;
 
 import com.google.appengine.api.datastore.DatastoreService;
@@ -72,12 +74,20 @@ public class TestCommentListServlet extends ServletTest {
     comment3.setProperty("timestamp", 1_000_002_000L);
     datastore.put(comment3);
 
+    Entity comment4 = new Entity("comment");
+    comment4.setProperty("text", "four");
+    comment4.setProperty("author", "david");
+    comment4.setProperty("timestamp", 1_000_000_000L);
+    datastore.put(comment4);
+
+    when(request.getParameter("amount")).thenReturn("3");
     new CommentListServlet().doGet(request, response);
     writer.flush();
     String response = stringWriter.toString();
     assertTrue(response.contains("one"));
     assertTrue(response.contains("two"));
     assertTrue(response.contains("three"));
+    assertFalse(response.contains("four"));
 
     assertTrue(response.indexOf("one") > response.indexOf("three"));
     assertTrue(response.indexOf("three") > response.indexOf("two"));
