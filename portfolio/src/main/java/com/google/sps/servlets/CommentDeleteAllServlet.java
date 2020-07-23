@@ -29,6 +29,7 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Transaction;
+import com.google.appengine.api.datastore.TransactionOptions;
 
 /** Servlet that returns comments. */
 @WebServlet("/commentDeleteAll")
@@ -36,15 +37,16 @@ public class CommentDeleteAllServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    
-    // Queries aren't allowed in transactions (or maybe I'm doing something wrong)
-    Query query = new Query("comment");
-    PreparedQuery results = datastore.prepare(query);
 
     // Transaction doesn't support try-with-resources??
-    Transaction txn = datastore.beginTransaction();
+    Transaction txn = datastore.beginTransaction(
+        TransactionOptions.Builder.withXG(true)
+    );
 
     try {
+        Query query = new Query("comment");
+        PreparedQuery results = datastore.prepare(query);
+
         for (Entity entity : results.asIterable()) {
             datastore.delete(txn, entity.getKey());
         }
