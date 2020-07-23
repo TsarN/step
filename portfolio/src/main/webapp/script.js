@@ -88,9 +88,25 @@ async function loadComments() {
     }
 }
 
+/* Delete all comments.
+ * Once the comments are deleted, reload the list of comments
+ */
+
+async function deleteAllComments() {
+    const result = await fetch( "/commentDeleteAll", {
+        method: "POST"
+    });
+
+    if (!result.ok) {
+        console.warn("Failed to delete comments");
+    }
+
+    await loadComments();
+}
+
 /*
  * Delete a comment identified by its id.
- * Once the comment is deleted, reload list of comments
+ * Once the comment is deleted, reload the list of comments
  */
 async function deleteComment(commentId) {
     const result = await fetch( "/commentDelete", {
