@@ -15,24 +15,13 @@
 package com.google.sps;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
 import org.junit.Test;
-import org.junit.Before;
-import org.junit.After;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
-import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 
 import com.google.sps.servlets.CommentListServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 
 public class TestCommentListServlet extends ServletTest {
