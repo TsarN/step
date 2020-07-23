@@ -35,36 +35,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 
-public class TestCommentListServlet {
-  private final LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
-
-  private HttpServletRequest request;
-  private HttpServletResponse response;
-  private PrintWriter writer;
-  private StringWriter stringWriter;
-
-  @Before
-  public void setUp() throws Exception {
-    helper.setUp();
-
-    this.request = mock(HttpServletRequest.class);
-    this.response = mock(HttpServletResponse.class);
-
-    this.stringWriter = new StringWriter();
-    this.writer = new PrintWriter(this.stringWriter);
-    when(this.response.getWriter()).thenReturn(this.writer);
-  }
-
-  @After
-  public void tearDown() {
-    helper.tearDown();
-  }
-
+public class TestCommentListServlet extends ServletTest {
   @Test
   public void testEmpty() throws Exception {
     new CommentListServlet().doGet(request, response);
     writer.flush();
-    assertTrue(stringWriter.toString().equals("[]"));
+    assertEquals("[]", stringWriter.toString());
   }
 
   @Test
