@@ -53,14 +53,9 @@ function getSelectValue(selectId) {
 }
 
 /*
- * Fetch comments from server and display them in #comments
+ * Display comment data in #comments.
  */
-async function loadComments() {
-    const amount = getSelectValue("commentAmount");
-    const order = getSelectValue("commentOrder");
-
-    const comments = await fetch(`/commentList?amount=${amount}&order=${order}`);
-
+function renderComments(commentData) {
     // Work on a copy of the container, then substitute it for the real one
     // Prevents the comment list from flashing too much
     const origContainer = document.getElementById("comments");
@@ -69,7 +64,7 @@ async function loadComments() {
 
     let isFirst = true;
 
-    for (const comment of await comments.json()) {
+    for (const comment of commentData) {
         if (!isFirst) {
             const separator = document.createElement("hr");
             separator.className = "comment-separator";
@@ -77,7 +72,7 @@ async function loadComments() {
         }
         const commentElement = document.createElement("div");
         commentElement.className = "comment";
-        
+
         const authorElement = document.createElement("div");
         authorElement.className = "light";
         authorElement.innerText = (comment.author || "unknown") + " writes:";
@@ -104,6 +99,27 @@ async function loadComments() {
 
     origContainer.parentNode.replaceChild(container, origContainer);
 }
+
+/*
+ * loadComments():
+ * Fetch comments from server and display them in #comments
+ */
+(() => {
+    let requestId = 0;
+
+    window.loadComments = async () => {
+        const amount = getSelectValue("commentAmount");
+        const order = getSelectValue("commentOrder");
+        let currentRequestId = ++requestId;
+
+        const comments = await fetch(`/commentList?amount=${amount}&order=${order}`);
+        if (requestId === currentRequestId) {
+            // request wasn't interrupted by another call to loadComments()
+            renderComments(await comments.json());
+        }
+    };
+})();
+
 
 /*
  * Submit the comment form and then reload the list of comments
