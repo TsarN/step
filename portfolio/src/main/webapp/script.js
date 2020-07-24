@@ -60,8 +60,13 @@ async function loadComments() {
     const order = getSelectValue("commentOrder");
 
     const comments = await fetch(`/commentList?amount=${amount}&order=${order}`);
-    const container = document.getElementById("comments");
+
+    // Work on a copy of the container, then substitute it for the real one
+    // Prevents the comment list from flashing too much
+    const origContainer = document.getElementById("comments");
+    const container = origContainer.cloneNode();
     container.innerHTML = "";
+
     let isFirst = true;
 
     for (const comment of await comments.json()) {
@@ -96,6 +101,8 @@ async function loadComments() {
         container.appendChild(commentElement);
         isFirst = false;
     }
+
+    origContainer.parentNode.replaceChild(container, origContainer);
 }
 
 /*
