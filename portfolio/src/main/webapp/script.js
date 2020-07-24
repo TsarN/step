@@ -116,6 +116,9 @@ async function submitComment() {
         body.append(name, value);
     }
 
+    // clear the form to dissuade temptation to spam comments
+    form.reset();
+
     await fetch("/commentPost", {
         method: "POST",
         body,
