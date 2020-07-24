@@ -110,7 +110,7 @@ function renderComments(commentData) {
     window.loadComments = async () => {
         const amount = getSelectValue("commentAmount");
         const order = getSelectValue("commentOrder");
-        let currentRequestId = ++requestId;
+        const currentRequestId = ++requestId;
 
         const comments = await fetch(`/commentList?amount=${amount}&order=${order}`);
         if (requestId === currentRequestId) {
