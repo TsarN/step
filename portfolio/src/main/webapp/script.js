@@ -43,13 +43,23 @@ function makeImagesClickable() {
 }
 
 /*
+ * Returns value of selected option in <select> element
+ * identified by selectId.
+ */
+
+function getSelectValue(selectId) {
+    const selector = document.getElementById(selectId);
+    return selector.options[selector.selectedIndex].value;
+}
+
+/*
  * Fetch comments from server and display them in #comments
  */
 async function loadComments() {
-    const amountSelector = document.getElementById("commentAmount");
-    const amount = amountSelector.options[amountSelector.selectedIndex].value;
+    const amount = getSelectValue("commentAmount");
+    const order = getSelectValue("commentOrder");
 
-    const comments = await fetch("/commentList?amount=" + amount);
+    const comments = await fetch(`/commentList?amount=${amount}&order=${order}`);
     const container = document.getElementById("comments");
     container.innerHTML = "";
     let isFirst = true;

@@ -51,7 +51,24 @@ public class CommentListServlet extends HttpServlet {
     Gson gson = builder.create();
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    Query query = new Query("comment").addSort("timestamp", SortDirection.DESCENDING);
+    Query query = new Query("comment");
+
+    String order = request.getParameter("order");
+
+    switch (order) {
+      case "oldest": // oldest first
+        query.addSort("timestamp", SortDirection.ASCENDING);
+        break;
+
+      case "newest": // newest first
+        query.addSort("timestamp", SortDirection.DESCENDING);
+        break;
+
+      default:
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "'order' must be either 'oldest' or 'newest'");
+        return;
+    }
+
     PreparedQuery results = datastore.prepare(query);
     
     List<Comment> comments = new ArrayList<>();
