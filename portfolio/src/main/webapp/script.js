@@ -98,6 +98,28 @@ async function loadComments() {
     }
 }
 
+/*
+ * Submit the comment form and then reload the list of comments
+ */
+
+async function submitComment() {
+    const form = document.getElementById("commentForm");
+    const body = new URLSearchParams();
+    for (const [name, value] of new FormData(form)) {
+        body.append(name, value);
+    }
+
+    await fetch("/commentPost", {
+        method: "POST",
+        body,
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        }
+    });
+
+    await loadComments();
+}
+
 /* Delete all comments.
  * Once the comments are deleted, reload the list of comments
  */

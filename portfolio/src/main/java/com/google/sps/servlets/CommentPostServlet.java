@@ -52,6 +52,6 @@ public class CommentPostServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(commentEntity);
 
-    response.sendRedirect("/");
+    response.setStatus(HttpServletResponse.SC_NO_CONTENT);
   }
 }
