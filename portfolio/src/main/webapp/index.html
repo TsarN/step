@@ -141,7 +141,8 @@
         <a href="#" id="logoutLink">Follow this link to log out</a>.
       </div>
       <form method="POST" id="commentForm" style="display: none" onsubmit="submitComment(); return false;">
-        <textarea placeholder="Leave a comment" name="comment" required="required"></textarea>
+        <input type="text" placeholder="Your name" name="author" id="authorField" required="required" />
+        <textarea placeholder="Leave a comment" name="comment" id="commentField" required="required"></textarea>
         <button type="submit">Submit</button>
       </form>
       

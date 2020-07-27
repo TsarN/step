@@ -25,12 +25,23 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
+import com.google.sps.UserManager;
 
 /** Servlet that returns comments. */
 @WebServlet("/commentPost")
 public class CommentPostServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    UserService userService = UserServiceFactory.getUserService();
+
+    if (!userService.isUserLoggedIn()) {
+      // It's not really "forbidden", more like "not authenticated"
+      // Sadly 401 is for HTTP-style authentication, which we don't want
+      response.sendError(HttpServletResponse.SC_FORBIDDEN, "authentication required");
+    }
+
     String comment = request.getParameter("comment");
     String author = request.getParameter("author");
 
@@ -47,10 +58,14 @@ public class CommentPostServlet extends HttpServlet {
     Entity commentEntity = new Entity("comment");
     commentEntity.setProperty("text", comment);
     commentEntity.setProperty("author", author);
+    commentEntity.setProperty("authorId", UserManager.getCurrentUserId());
     commentEntity.setProperty("timestamp", Instant.now().toEpochMilli());
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(commentEntity);
+
+    // Remember the nickname
+    UserManager.setCurrentUserNickname(author);
 
     response.setStatus(HttpServletResponse.SC_NO_CONTENT);
   }

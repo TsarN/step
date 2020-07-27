@@ -18,6 +18,7 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.sps.UserManager;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -45,10 +46,12 @@ public class AuthServlet extends HttpServlet {
 
         if (userService.isUserLoggedIn()) {
             String email = userService.getCurrentUser().getEmail();
+            String nickname = UserManager.getCurrentUserNickname();
             String logoutUrl = userService.createLogoutURL("/");
 
             res.put("loggedIn", true);
             res.put("email", email);
+            res.put("nickname", nickname);
             res.put("logoutUrl", logoutUrl);
         } else {
             String loginUrl = userService.createLoginURL("/");

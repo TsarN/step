@@ -133,7 +133,7 @@ async function submitComment() {
     }
 
     // clear the form to dissuade temptation to spam comments
-    form.reset();
+    document.getElementById("commentField").innerText = "";
 
     await fetch("/commentPost", {
         method: "POST",
@@ -196,6 +196,7 @@ async function updateAuthInfo() {
         document.getElementById("commentForm").style.display = "";
         document.getElementById("logoutLink").href = user["logoutUrl"];
         document.getElementById("usernameDisplay").innerText = user["email"];
+        document.getElementById("authorField").value = user["nickname"];
     } else {
         document.getElementById("loginPrompt").style.display = "";
         document.getElementById("loginLink").href = user["loginUrl"];
