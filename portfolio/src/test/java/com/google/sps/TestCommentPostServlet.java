@@ -20,7 +20,7 @@ public class TestCommentPostServlet extends ServletTest {
         when(request.getParameter("comment")).thenReturn("a test comment");
 
         new CommentPostServlet().doPost(request, response);
-        verify(response, atLeastOnce()).sendRedirect("/");
+        verify(response).setStatus(HttpServletResponse.SC_NO_CONTENT);
 
         Query query = new Query("comment");
         List<Entity> results = datastore.prepare(query).asList(FetchOptions.Builder.withDefaults());
@@ -36,7 +36,7 @@ public class TestCommentPostServlet extends ServletTest {
         when(request.getParameter("author")).thenReturn(null);
         when(request.getParameter("comment")).thenReturn("a test comment");
         new CommentPostServlet().doPost(request, response);
-        verify(response, atLeastOnce()).sendError(
+        verify(response).sendError(
                 HttpServletResponse.SC_BAD_REQUEST, "'author' parameter must not be empty"
         );
 
@@ -52,7 +52,7 @@ public class TestCommentPostServlet extends ServletTest {
         when(request.getParameter("author")).thenReturn("fred");
         when(request.getParameter("comment")).thenReturn(null);
         new CommentPostServlet().doPost(request, response);
-        verify(response, atLeastOnce()).sendError(
+        verify(response).sendError(
                 HttpServletResponse.SC_BAD_REQUEST, "'comment' parameter must not be empty"
         );
 
