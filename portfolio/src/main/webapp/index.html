@@ -10,7 +10,7 @@
   <script src="script.js"></script>
 </head>
 
-<body onload="loadComments()">
+<body onload="init()">
   <div class="navbar">
     <a href="#about">About me</a>
     <a href="#projects">Projects</a>
@@ -133,8 +133,14 @@
     <h3>Leave a comment!</h3>
 
     <div>
-      <form method="POST" id="commentForm" onsubmit="submitComment(); return false;">
-        <input type="text" placeholder="Your name" name="author" required="required" />
+      <div id="loginPrompt" style="display: none">
+        <a href="#" id="loginLink">Please log in</a> to leave a comment.
+      </div>
+      <div id="logoutPrompt" style="display: none">
+        You are logged in as <span id="usernameDisplay">(username)</span>.
+        <a href="#" id="logoutLink">Follow this link to log out</a>.
+      </div>
+      <form method="POST" id="commentForm" style="display: none" onsubmit="submitComment(); return false;">
         <textarea placeholder="Leave a comment" name="comment" required="required"></textarea>
         <button type="submit">Submit</button>
       </form>

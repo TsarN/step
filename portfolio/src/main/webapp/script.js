@@ -176,8 +176,36 @@ async function deleteComment(commentId) {
     });
 
     if (!result.ok) {
-        console.warn("Failed to delete comment " + commentId);
+        console.error("Failed to delete comment " + commentId);
     }
 
+    await loadComments();
+}
+
+async function updateAuthInfo() {
+    const result = await fetch("/auth");
+
+    if (!result.ok) {
+        console.error("Failed to update auth info");
+    }
+
+    const user = await result.json();
+
+    if (user["loggedIn"]) {
+        document.getElementById("logoutPrompt").style.display = "";
+        document.getElementById("commentForm").style.display = "";
+        document.getElementById("logoutLink").href = user["logoutUrl"];
+        document.getElementById("usernameDisplay").innerText = user["email"];
+    } else {
+        document.getElementById("loginPrompt").style.display = "";
+        document.getElementById("loginLink").href = user["loginUrl"];
+    }
+}
+
+/*
+ * This function is called once after the page is loaded.
+ */
+async function init() {
+    await updateAuthInfo();
     await loadComments();
 }
