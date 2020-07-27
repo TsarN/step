@@ -43,18 +43,28 @@ function makeImagesClickable() {
 }
 
 /*
- * Fetch comments from server and display them in #comments
+ * Returns value of selected option in <select> element
+ * identified by selectId.
  */
-async function loadComments() {
-    const amountSelector = document.getElementById("commentAmount");
-    const amount = amountSelector.options[amountSelector.selectedIndex].value;
 
-    const comments = await fetch("/commentList?amount=" + amount);
-    const container = document.getElementById("comments");
+function getSelectValue(selectId) {
+    const selector = document.getElementById(selectId);
+    return selector.options[selector.selectedIndex].value;
+}
+
+/*
+ * Display comment data in #comments.
+ */
+function renderComments(commentData) {
+    // Work on a copy of the container, then substitute it for the real one
+    // Prevents the comment list from flashing too much
+    const origContainer = document.getElementById("comments");
+    const container = origContainer.cloneNode();
     container.innerHTML = "";
+
     let isFirst = true;
 
-    for (const comment of await comments.json()) {
+    for (const comment of commentData) {
         if (!isFirst) {
             const separator = document.createElement("hr");
             separator.className = "comment-separator";
@@ -62,7 +72,7 @@ async function loadComments() {
         }
         const commentElement = document.createElement("div");
         commentElement.className = "comment";
-        
+
         const authorElement = document.createElement("div");
         authorElement.className = "light";
         authorElement.innerText = (comment.author || "unknown") + " writes:";
@@ -86,6 +96,54 @@ async function loadComments() {
         container.appendChild(commentElement);
         isFirst = false;
     }
+
+    origContainer.parentNode.replaceChild(container, origContainer);
+}
+
+/*
+ * loadComments():
+ * Fetch comments from server and display them in #comments
+ */
+(() => {
+    let requestId = 0;
+
+    window.loadComments = async () => {
+        const amount = getSelectValue("commentAmount");
+        const order = getSelectValue("commentOrder");
+        const currentRequestId = ++requestId;
+
+        const comments = await fetch(`/commentList?amount=${amount}&order=${order}`);
+        if (requestId === currentRequestId) {
+            // request wasn't interrupted by another call to loadComments()
+            renderComments(await comments.json());
+        }
+    };
+})();
+
+
+/*
+ * Submit the comment form and then reload the list of comments
+ */
+
+async function submitComment() {
+    const form = document.getElementById("commentForm");
+    const body = new URLSearchParams();
+    for (const [name, value] of new FormData(form)) {
+        body.append(name, value);
+    }
+
+    // clear the form to dissuade temptation to spam comments
+    form.reset();
+
+    await fetch("/commentPost", {
+        method: "POST",
+        body,
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        }
+    });
+
+    await loadComments();
 }
 
 /* Delete all comments.
