@@ -1,3 +1,17 @@
+// Copyright 2020 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 "use strict";
 
 /*
@@ -133,7 +147,7 @@ async function submitComment() {
     }
 
     // clear the form to dissuade temptation to spam comments
-    form.reset();
+    document.getElementById("commentField").innerText = "";
 
     await fetch("/commentPost", {
         method: "POST",
@@ -176,8 +190,37 @@ async function deleteComment(commentId) {
     });
 
     if (!result.ok) {
-        console.warn("Failed to delete comment " + commentId);
+        console.error("Failed to delete comment " + commentId);
     }
 
+    await loadComments();
+}
+
+async function updateAuthInfo() {
+    const result = await fetch("/auth");
+
+    if (!result.ok) {
+        console.error("Failed to update auth info");
+    }
+
+    const user = await result.json();
+
+    if (user["loggedIn"]) {
+        document.getElementById("logoutPrompt").style.display = "";
+        document.getElementById("commentForm").style.display = "";
+        document.getElementById("logoutLink").href = user["logoutUrl"];
+        document.getElementById("usernameDisplay").innerText = user["email"];
+        document.getElementById("authorField").value = user["nickname"];
+    } else {
+        document.getElementById("loginPrompt").style.display = "";
+        document.getElementById("loginLink").href = user["loginUrl"];
+    }
+}
+
+/*
+ * This function is called once after the page is loaded.
+ */
+async function init() {
+    await updateAuthInfo();
     await loadComments();
 }
