@@ -16,6 +16,7 @@ package com.google.sps;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig;
 import org.junit.After;
 import org.junit.Before;
 
@@ -23,13 +24,26 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Collections;
+import java.util.Map;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class ServletTest {
     protected final LocalServiceTestHelper helper =
-            new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
+            new LocalServiceTestHelper(
+                    new LocalDatastoreServiceTestConfig(),
+                    new LocalUserServiceTestConfig())
+            .setEnvIsLoggedIn(true)
+            .setEnvEmail("test-user@example.com")
+            .setEnvAuthDomain("example.com")
+            .setEnvAttributes(
+                    Collections.singletonMap(
+                            "com.google.appengine.api.users.UserService.user_id_key",
+                            "test_user"
+                    )
+            );
 
     protected HttpServletRequest request;
     protected HttpServletResponse response;

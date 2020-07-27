@@ -13,6 +13,17 @@ import static org.junit.Assert.*;
 
 public class TestCommentPostServlet extends ServletTest {
     @Test
+    public void testSubmitNotAuthenticated() throws Exception {
+        helper.setEnvIsLoggedIn(false);
+
+        when(request.getParameter("author")).thenReturn("anonymous user");
+        when(request.getParameter("comment")).thenReturn("a test comment");
+
+        new CommentPostServlet().doPost(request, response);
+        verify(response).sendError(HttpServletResponse.SC_FORBIDDEN, "authentication required");
+    }
+
+    @Test
     public void testSubmit() throws Exception {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
@@ -27,6 +38,8 @@ public class TestCommentPostServlet extends ServletTest {
         assertEquals(1, results.size());
         assertEquals("fred", results.get(0).getProperty("author"));
         assertEquals("a test comment", results.get(0).getProperty("text"));
+
+        assertEquals(UserManager.getCurrentUserNickname(), "fred");
     }
 
     @Test

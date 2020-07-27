@@ -40,6 +40,7 @@ public class CommentPostServlet extends HttpServlet {
       // It's not really "forbidden", more like "not authenticated"
       // Sadly 401 is for HTTP-style authentication, which we don't want
       response.sendError(HttpServletResponse.SC_FORBIDDEN, "authentication required");
+      return;
     }
 
     String comment = request.getParameter("comment");
