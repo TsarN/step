@@ -140,7 +140,7 @@
         You are logged in as <span id="usernameDisplay">(username)</span>.
         <a href="#" id="logoutLink">Follow this link to log out</a>.
       </div>
-      <form method="POST" id="commentForm" style="display: none" onsubmit="submitComment(); return false;">
+      <form method="POST" id="commentForm" style="display: none">
         <input type="text" placeholder="Your name" name="author" id="authorField" required="required" />
         <textarea placeholder="Leave a comment" name="comment" id="commentField" required="required"></textarea>
         <button type="submit">Submit</button>
@@ -149,21 +149,21 @@
       <hr />
       
       <div class="equal-space-container">
-        <select id="commentAmount" onchange="loadComments()">
+        <select id="commentAmount">
           <option value="5" selected="selected">Show last 5 comments</option>
           <option value="15">Show last 15 comments</option>
           <option value="50">Show last 50 comments</option>
           <option value="-1">Show all comments</option>
         </select>
 
-        <select id="commentOrder" onchange="loadComments()">
+        <select id="commentOrder">
           <option value="newest" selected="selected">Newest first</option>
           <option value="oldest">Oldest first</option>
         </select>
       </div>
 
       <div>
-        <a class="delete-link" href="#" onclick="deleteAllComments()">
+        <a class="delete-link" id="deleteAllComments" style="display: none" href="#" onclick="deleteAllComments()">
           Delete all comments
         </a>
       </div>

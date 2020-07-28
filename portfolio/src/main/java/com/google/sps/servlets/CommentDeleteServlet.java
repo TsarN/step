@@ -21,12 +21,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
-import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.*;
 import com.google.sps.SafeParser;
+import com.google.sps.UserManager;
 
 /** Servlet that returns comments. */
 @WebServlet("/commentDelete")
@@ -43,7 +40,16 @@ public class CommentDeleteServlet extends HttpServlet {
 
     try {
       Key key = KeyFactory.stringToKey(id);
+
+      if (!UserManager.canCurrentUserDeleteComment(key)) {
+        response.sendError(HttpServletResponse.SC_FORBIDDEN, "not allowed to delete the comment");
+        return;
+      }
+
       datastore.delete(key);
+    } catch (EntityNotFoundException exception) {
+      response.sendError(HttpServletResponse.SC_NOT_FOUND, "comment not found");
+      return;
     } catch (IllegalArgumentException exception) {
       response.sendError(HttpServletResponse.SC_BAD_REQUEST, "'id' parameter is invalid");
       return;
