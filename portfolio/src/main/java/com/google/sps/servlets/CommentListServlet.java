@@ -81,6 +81,7 @@ public class CommentListServlet extends HttpServlet {
       comments.add(new Comment(
         KeyFactory.keyToString(entity.getKey()),
         (String)entity.getProperty("author"),
+        (String)entity.getProperty("authorId"),
         (String)entity.getProperty("text"),
         Instant.ofEpochMilli((long)entity.getProperty("timestamp"))
       ));

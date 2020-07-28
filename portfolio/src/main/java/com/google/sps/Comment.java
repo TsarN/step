@@ -19,12 +19,18 @@ import java.time.Instant;
 public class Comment {
     private final String id;
     private final String author;
+    private final String authorId;
     private final String text;
     private final Instant timestamp;
 
-    public Comment(final String id, final String author, final String text, final Instant timestamp) {
+    public Comment(final String id,
+                   final String author,
+                   final String authorId,
+                   final String text,
+                   final Instant timestamp) {
         this.id = id;
         this.author = author;
+        this.authorId = authorId;
         this.text = text;
         this.timestamp = timestamp;
     }
@@ -35,6 +41,10 @@ public class Comment {
 
     public String getAuthor() {
         return this.author;
+    }
+
+    public String getAuthorId() {
+        return authorId;
     }
 
     public String getText() {

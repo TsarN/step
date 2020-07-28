@@ -66,134 +66,156 @@ function getSelectValue(selectId) {
     return selector.options[selector.selectedIndex].value;
 }
 
-/*
- * Display comment data in #comments.
- */
-function renderComments(commentData) {
-    // Work on a copy of the container, then substitute it for the real one
-    // Prevents the comment list from flashing too much
-    const origContainer = document.getElementById("comments");
-    const container = origContainer.cloneNode();
-    container.innerHTML = "";
+class CommentWidget {
+    constructor(user) {
+        this.user = user;
+        this.requestId = 0;
 
-    let isFirst = true;
+        document.getElementById("commentOrder")
+            .addEventListener("change", e => { this.load(); });
 
-    for (const comment of commentData) {
-        if (!isFirst) {
-            const separator = document.createElement("hr");
-            separator.className = "comment-separator";
-            container.append(separator);
+        document.getElementById("commentAmount")
+            .addEventListener("change", e => { this.load(); });
+
+        if (user["loggedIn"]) {
+            document.getElementById("commentForm")
+                .addEventListener("submit", e => {
+                    this.submit();
+                    e.preventDefault();
+                });
         }
-        const commentElement = document.createElement("div");
-        commentElement.className = "comment";
 
-        const authorElement = document.createElement("div");
-        authorElement.className = "light";
-        authorElement.innerText = (comment.author || "unknown") + " writes:";
-
-        const textElement = document.createElement("div");
-        textElement.innerText = comment.text;
-
-        const deleteLink = document.createElement("a");
-        deleteLink.href = "#";
-        deleteLink.innerText = "delete";
-        deleteLink.className = "delete-link";
-        deleteLink.addEventListener("click", (e) => {
-            deleteComment(comment.id);
-            e.preventDefault();
-        });
-
-        commentElement.appendChild(authorElement);
-        commentElement.appendChild(deleteLink);
-        commentElement.appendChild(textElement);
-
-        container.appendChild(commentElement);
-        isFirst = false;
+        if (user["isAdmin"]) {
+            document.getElementById("deleteAllComments")
+                .addEventListener("click", e => { this.deleteAll(); });
+        }
     }
 
-    origContainer.parentNode.replaceChild(container, origContainer);
-}
+    /*
+     * Display comment data in #comments.
+     */
+    renderComments(commentData) {
+        // Work on a copy of the container, then substitute it for the real one
+        // Prevents the comment list from flashing too much
+        const origContainer = document.getElementById("comments");
+        const container = origContainer.cloneNode();
+        container.innerHTML = "";
 
-/*
- * loadComments():
- * Fetch comments from server and display them in #comments
- */
-(() => {
-    let requestId = 0;
+        let isFirst = true;
 
-    window.loadComments = async () => {
+        for (const comment of commentData) {
+            if (!isFirst) {
+                const separator = document.createElement("hr");
+                separator.className = "comment-separator";
+                container.append(separator);
+            }
+            const commentElement = document.createElement("div");
+            commentElement.className = "comment";
+
+            const authorElement = document.createElement("div");
+            authorElement.className = "light";
+            authorElement.innerText = (comment.author || "unknown") + " writes:";
+            commentElement.appendChild(authorElement);
+
+            if (this.user["loggedIn"] && (this.user["isAdmin"] || this.user["id"] === comment["authorId"])) {
+                const deleteLink = document.createElement("a");
+                deleteLink.href = "#";
+                deleteLink.innerText = "delete";
+                deleteLink.className = "delete-link";
+                deleteLink.addEventListener("click", (e) => {
+                    this.deleteOne(comment.id);
+                    e.preventDefault();
+                });
+                commentElement.appendChild(deleteLink);
+            }
+
+            const textElement = document.createElement("div");
+            textElement.innerText = comment.text;
+            commentElement.appendChild(textElement);
+
+            container.appendChild(commentElement);
+            isFirst = false;
+        }
+
+        origContainer.parentNode.replaceChild(container, origContainer);
+    }
+
+    /*
+     * Fetch comments from server and display them in #comments
+     */
+    async load() {
         const amount = getSelectValue("commentAmount");
         const order = getSelectValue("commentOrder");
-        const currentRequestId = ++requestId;
+        const currentRequestId = ++this.requestId;
 
         const comments = await fetch(`/commentList?amount=${amount}&order=${order}`);
-        if (requestId === currentRequestId) {
+        if (this.requestId === currentRequestId) {
             // request wasn't interrupted by another call to loadComments()
-            renderComments(await comments.json());
+            this.renderComments(await comments.json());
         }
-    };
-})();
-
-
-/*
- * Submit the comment form and then reload the list of comments
- */
-
-async function submitComment() {
-    const form = document.getElementById("commentForm");
-    const body = new URLSearchParams();
-    for (const [name, value] of new FormData(form)) {
-        body.append(name, value);
     }
 
-    // clear the form to dissuade temptation to spam comments
-    document.getElementById("commentField").innerText = "";
 
-    await fetch("/commentPost", {
-        method: "POST",
-        body,
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
+    /*
+     * Submit the comment form and then reload the list of comments
+     */
+
+    async submit() {
+        const form = document.getElementById("commentForm");
+        const body = new URLSearchParams();
+        for (const [name, value] of new FormData(form)) {
+            body.append(name, value);
         }
-    });
 
-    await loadComments();
-}
+        // clear the form to dissuade temptation to spam comments
+        document.getElementById("commentField").innerText = "";
 
-/* Delete all comments.
- * Once the comments are deleted, reload the list of comments
- */
+        await fetch("/commentPost", {
+            method: "POST",
+            body,
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            }
+        });
 
-async function deleteAllComments() {
-    const result = await fetch( "/commentDeleteAll", {
-        method: "POST"
-    });
-
-    if (!result.ok) {
-        console.warn("Failed to delete comments");
+        await this.load();
     }
 
-    await loadComments();
-}
+    /* Delete all comments.
+     * Once the comments are deleted, reload the list of comments
+     */
 
-/*
- * Delete a comment identified by its id.
- * Once the comment is deleted, reload the list of comments
- */
-async function deleteComment(commentId) {
-    const result = await fetch( "/commentDelete", {
-        method: "POST",
-        body: "id=" + commentId,
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
+    async deleteAll() {
+        const result = await fetch("/commentDeleteAll", {
+            method: "POST"
+        });
+
+        if (!result.ok) {
+            console.warn("Failed to delete comments");
         }
-    });
 
-    if (!result.ok) {
-        console.error("Failed to delete comment " + commentId);
+        await this.load();
     }
 
-    await loadComments();
+    /*
+     * Delete a comment identified by its id.
+     * Once the comment is deleted, reload the list of comments
+     */
+    async deleteOne(commentId) {
+        const result = await fetch("/commentDelete", {
+            method: "POST",
+            body: "id=" + commentId,
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            }
+        });
+
+        if (!result.ok) {
+            console.error("Failed to delete comment " + commentId);
+        }
+
+        await this.load();
+    }
 }
 
 async function updateAuthInfo() {
@@ -211,16 +233,19 @@ async function updateAuthInfo() {
         document.getElementById("logoutLink").href = user["logoutUrl"];
         document.getElementById("usernameDisplay").innerText = user["email"];
         document.getElementById("authorField").value = user["nickname"];
+
+        if (user["isAdmin"]) {
+            document.getElementById("deleteAllComments").style.display = "";
+        }
     } else {
         document.getElementById("loginPrompt").style.display = "";
         document.getElementById("loginLink").href = user["loginUrl"];
     }
+
+    return user;
 }
 
-/*
- * This function is called once after the page is loaded.
- */
 async function init() {
-    await updateAuthInfo();
-    await loadComments();
+    const comments = new CommentWidget(await updateAuthInfo());
+    await comments.load();
 }
