@@ -82,7 +82,7 @@ public class UserManager {
   public static boolean canCurrentUserDeleteComment(Key key) throws EntityNotFoundException {
     UserService userService = UserServiceFactory.getUserService();
 
-    if (userService.isUserAdmin()) {
+    if (userService.isUserLoggedIn() && userService.isUserAdmin()) {
       return true;
     }
 
