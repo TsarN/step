@@ -30,6 +30,8 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Transaction;
 import com.google.appengine.api.datastore.TransactionOptions;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 
 /** Servlet that returns comments. */
 @WebServlet("/commentDeleteAll")
@@ -40,21 +42,21 @@ public class CommentDeleteAllServlet extends HttpServlet {
 
     // Transaction doesn't support try-with-resources??
     Transaction txn = datastore.beginTransaction(
-        TransactionOptions.Builder.withXG(true)
+      TransactionOptions.Builder.withXG(true)
     );
 
     try {
-        Query query = new Query("comment");
-        PreparedQuery results = datastore.prepare(query);
+      Query query = new Query("comment");
+      PreparedQuery results = datastore.prepare(query);
 
-        for (Entity entity : results.asIterable()) {
-            datastore.delete(txn, entity.getKey());
-        }
-        txn.commit();
+      for (Entity entity : results.asIterable()) {
+          datastore.delete(txn, entity.getKey());
+      }
+      txn.commit();
     } finally {
-        if (txn.isActive()) {
-            txn.rollback();
-        }
+      if (txn.isActive()) {
+          txn.rollback();
+      }
     }
 
     response.setStatus(HttpServletResponse.SC_NO_CONTENT);

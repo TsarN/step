@@ -30,39 +30,39 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class ServletTest {
-    protected final LocalServiceTestHelper helper =
-            new LocalServiceTestHelper(
-                    new LocalDatastoreServiceTestConfig(),
-                    new LocalUserServiceTestConfig())
-            .setEnvIsLoggedIn(true)
-            .setEnvEmail("test-user@example.com")
-            .setEnvAuthDomain("example.com")
-            .setEnvAttributes(
-                    Collections.singletonMap(
-                            "com.google.appengine.api.users.UserService.user_id_key",
-                            "test_user"
-                    )
-            );
+  protected final LocalServiceTestHelper helper =
+      new LocalServiceTestHelper(
+          new LocalDatastoreServiceTestConfig(),
+          new LocalUserServiceTestConfig())
+          .setEnvIsLoggedIn(true)
+          .setEnvEmail("test-user@example.com")
+          .setEnvAuthDomain("example.com")
+          .setEnvAttributes(
+              Collections.singletonMap(
+                  "com.google.appengine.api.users.UserService.user_id_key",
+                  "test_user"
+              )
+          );
 
-    protected HttpServletRequest request;
-    protected HttpServletResponse response;
-    protected PrintWriter writer;
-    protected StringWriter stringWriter;
+  protected HttpServletRequest request;
+  protected HttpServletResponse response;
+  protected PrintWriter writer;
+  protected StringWriter stringWriter;
 
-    @Before
-    public void setUp() throws Exception {
-        helper.setUp();
+  @Before
+  public void setUp() throws Exception {
+    helper.setUp();
 
-        this.request = mock(HttpServletRequest.class);
-        this.response = mock(HttpServletResponse.class);
+    this.request = mock(HttpServletRequest.class);
+    this.response = mock(HttpServletResponse.class);
 
-        this.stringWriter = new StringWriter();
-        this.writer = new PrintWriter(this.stringWriter);
-        when(this.response.getWriter()).thenReturn(this.writer);
-    }
+    this.stringWriter = new StringWriter();
+    this.writer = new PrintWriter(this.stringWriter);
+    when(this.response.getWriter()).thenReturn(this.writer);
+  }
 
-    @After
-    public void tearDown() {
-        helper.tearDown();
-    }
+  @After
+  public void tearDown() {
+    helper.tearDown();
+  }
 }
