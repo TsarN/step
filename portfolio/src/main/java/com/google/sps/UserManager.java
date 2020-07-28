@@ -78,4 +78,18 @@ public class UserManager {
     user.setProperty("nickname", nickname);
     datastore.put(user);
   }
+
+  public static boolean canCurrentUserDeleteComment(Key key) throws EntityNotFoundException {
+    UserService userService = UserServiceFactory.getUserService();
+
+    if (userService.isUserAdmin()) {
+      return true;
+    }
+
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+    Entity comment = datastore.get(key);
+
+    return comment.getProperty("authorId").equals(getCurrentUserId());
+  }
 }
