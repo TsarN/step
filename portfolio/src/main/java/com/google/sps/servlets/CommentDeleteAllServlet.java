@@ -38,6 +38,13 @@ import com.google.appengine.api.users.UserServiceFactory;
 public class CommentDeleteAllServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    UserService userService = UserServiceFactory.getUserService();
+
+    if (!userService.isUserAdmin()) {
+      response.sendError(HttpServletResponse.SC_FORBIDDEN, "admin required");
+      return;
+    }
+
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
     // Transaction doesn't support try-with-resources??
