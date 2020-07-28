@@ -32,6 +32,20 @@ import com.google.sps.UserManager;
 /** Servlet that returns comments. */
 @WebServlet("/commentPost")
 public class CommentPostServlet extends HttpServlet {
+  private Instant mockInstant = null;
+
+  public void setMockInstant(Instant mockInstant) {
+    this.mockInstant = mockInstant;
+  }
+
+  private Instant now() {
+    if (this.mockInstant != null) {
+      return this.mockInstant;
+    } else {
+      return Instant.now();
+    }
+  }
+
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
@@ -60,7 +74,7 @@ public class CommentPostServlet extends HttpServlet {
     commentEntity.setProperty("text", comment);
     commentEntity.setProperty("author", author);
     commentEntity.setProperty("authorId", UserManager.getCurrentUserId());
-    commentEntity.setProperty("timestamp", Instant.now().toEpochMilli());
+    commentEntity.setProperty("timestamp", now().toEpochMilli());
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(commentEntity);
