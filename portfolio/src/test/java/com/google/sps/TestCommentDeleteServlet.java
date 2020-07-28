@@ -23,8 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.arrayContaining;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -49,7 +48,7 @@ public class TestCommentDeleteServlet extends ServletTest {
 
     Query query = new Query("comment");
     List<Entity> results = datastore.prepare(query).asList(FetchOptions.Builder.withDefaults());
-    assertThat(results.toArray(), arrayContaining(comment));
+    assertThat(results, contains(comment));
   }
 
   @Test
@@ -71,7 +70,7 @@ public class TestCommentDeleteServlet extends ServletTest {
 
     Query query = new Query("comment");
     List<Entity> results = datastore.prepare(query).asList(FetchOptions.Builder.withDefaults());
-    assertThat(results.toArray(), arrayContaining(comment));
+    assertThat(results, contains(comment));
   }
 
   @Test
@@ -93,7 +92,7 @@ public class TestCommentDeleteServlet extends ServletTest {
     verify(response).setStatus(HttpServletResponse.SC_NO_CONTENT);
     Query query = new Query("comment");
     List<Entity> results = datastore.prepare(query).asList(FetchOptions.Builder.withDefaults());
-    assertThat(results.size(), equalTo(0));
+    assertThat(results, empty());
   }
 
   @Test
@@ -121,6 +120,6 @@ public class TestCommentDeleteServlet extends ServletTest {
     verify(response).setStatus(HttpServletResponse.SC_NO_CONTENT);
     Query query = new Query("comment");
     List<Entity> results = datastore.prepare(query).asList(FetchOptions.Builder.withDefaults());
-    assertThat(results.toArray(), arrayContaining(comment1));
+    assertThat(results, contains(comment1));
   }
 }

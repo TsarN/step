@@ -69,7 +69,7 @@ public class TestCommentPostServlet extends ServletTest {
 
     Query query = new Query("comment");
     List<Entity> results = datastore.prepare(query).asList(FetchOptions.Builder.withDefaults());
-    assertThat(results.size(), equalTo(0));
+    assertThat(results, empty());
   }
 
   @Test
@@ -85,6 +85,6 @@ public class TestCommentPostServlet extends ServletTest {
 
     Query query = new Query("comment");
     List<Entity> results = datastore.prepare(query).asList(FetchOptions.Builder.withDefaults());
-    assertThat(results.size(), equalTo(0));
+    assertThat(results, empty());
   }
 }

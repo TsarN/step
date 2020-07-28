@@ -38,7 +38,7 @@ public class TestCommentDeleteAllServlet extends ServletTest {
     verify(response).setStatus(HttpServletResponse.SC_NO_CONTENT);
     Query query = new Query("comment");
     List<Entity> results = datastore.prepare(query).asList(FetchOptions.Builder.withDefaults());
-    assertThat(results.size(), equalTo(0));
+    assertThat(results, empty());
   }
 
   @Test
@@ -65,6 +65,6 @@ public class TestCommentDeleteAllServlet extends ServletTest {
     verify(response).sendError(HttpServletResponse.SC_FORBIDDEN, "admin required");
     Query query = new Query("comment");
     List<Entity> results = datastore.prepare(query).asList(FetchOptions.Builder.withDefaults());
-    assertThat(results.toArray(), arrayContainingInAnyOrder(comment1, comment2));
+    assertThat(results, containsInAnyOrder(comment1, comment2));
   }
 }
