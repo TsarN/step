@@ -15,6 +15,9 @@
 package com.google.sps;
 
 import static org.junit.Assert.*;
+import static org.mockito.Matchers.contains;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.junit.Test;
@@ -24,6 +27,10 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 
 import com.google.sps.servlets.CommentListServlet;
+
+import javax.servlet.http.HttpServletResponse;
+
+import static org.mockito.Mockito.verify;
 
 
 public class TestCommentListServlet extends ServletTest {
@@ -72,6 +79,24 @@ public class TestCommentListServlet extends ServletTest {
     String response = stringWriter.toString();
     assertTrue(response.contains("do not translate my name"));
     assertTrue(response.contains("Африка"));
+  }
+
+  @Test
+  public void testCommentTranslationInvalidLanguage() throws Exception {
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+    Entity commentEntity = new Entity("comment");
+    commentEntity.setProperty("text", "Africa");
+    commentEntity.setProperty("author", "do not translate my name");
+    commentEntity.setProperty("timestamp", 123456789L);
+
+    datastore.put(commentEntity);
+    when(request.getParameter("order")).thenReturn("newest");
+    when(request.getParameter("translateInto")).thenReturn("invalid-language-code");
+
+    new CommentListServlet().doGet(request, response);
+
+    verify(response).sendError(eq(HttpServletResponse.SC_BAD_REQUEST), contains("translation error"));
   }
 
   @Test

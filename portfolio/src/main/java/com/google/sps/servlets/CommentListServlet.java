@@ -31,6 +31,8 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.cloud.translate.Translate;
+import com.google.cloud.translate.TranslateException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.sps.Comment;
@@ -80,16 +82,27 @@ public class CommentListServlet extends HttpServlet {
     
     List<Comment> comments = new ArrayList<>();
 
+    Translator translator = new Translator();
+
     for (Entity entity : results.asIterable()) {
       if (comments.size() == amount) {
         break;
+      }
+
+      String text = (String) entity.getProperty("text");
+
+      try {
+        text = translator.translate(text, translateInto);
+      } catch (TranslateException exception) {
+        response.sendError(exception.getCode(), "translation error: " + exception.getMessage());
+        return;
       }
 
       comments.add(new Comment(
         KeyFactory.keyToString(entity.getKey()),
         (String)entity.getProperty("author"),
         (String)entity.getProperty("authorId"),
-        new Translator().translate((String)entity.getProperty("text"), translateInto),
+        text,
         Instant.ofEpochMilli((long)entity.getProperty("timestamp"))
       ));
     }
