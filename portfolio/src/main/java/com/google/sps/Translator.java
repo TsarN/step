@@ -10,7 +10,10 @@ public class Translator {
       return text;
     }
 
-    Translate translate = TranslateOptions.getDefaultInstance().getService();
+    Translate translate = TranslateOptions.newBuilder()
+        .setProjectId("tsarn-step-2020")
+        .setQuotaProjectId("tsarn-step-2020")
+        .build().getService();
     Translation translation =
         translate.translate(text, Translate.TranslateOption.targetLanguage(languageCode));
 
