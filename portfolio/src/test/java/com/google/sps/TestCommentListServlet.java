@@ -55,6 +55,26 @@ public class TestCommentListServlet extends ServletTest {
   }
 
   @Test
+  public void testCommentTranslation() throws Exception {
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+    Entity commentEntity = new Entity("comment");
+    commentEntity.setProperty("text", "Africa"); // A word that only has one translation
+    commentEntity.setProperty("author", "do not translate my name");
+    commentEntity.setProperty("timestamp", 123456789L);
+
+    datastore.put(commentEntity);
+    when(request.getParameter("order")).thenReturn("newest");
+    when(request.getParameter("translateInto")).thenReturn("ru");
+
+    new CommentListServlet().doGet(request, response);
+    writer.flush();
+    String response = stringWriter.toString();
+    assertTrue(response.contains("do not translate my name"));
+    assertTrue(response.contains("Африка"));
+  }
+
+  @Test
   public void testCommentOrderNewest() throws Exception {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
