@@ -77,6 +77,9 @@ class CommentWidget {
         document.getElementById("commentAmount")
             .addEventListener("change", e => { this.load(); });
 
+        document.getElementById("translateInto")
+            .addEventListener("change", e => { this.load(); });
+
         if (user["loggedIn"]) {
             document.getElementById("commentForm")
                 .addEventListener("submit", e => {
@@ -88,6 +91,21 @@ class CommentWidget {
         if (user["isAdmin"]) {
             document.getElementById("deleteAllComments")
                 .addEventListener("click", e => { this.deleteAll(); });
+        }
+    }
+
+    /*
+     * Populate select#translateInto with languages
+     */
+    async loadLanguages() {
+        const data = await (await fetch("/translateLanguages")).json();
+        const element = document.getElementById("translateInto");
+
+        for (const lang of data) {
+            const option = document.createElement("option");
+            option.value = lang.code;
+            option.innerText = lang.name;
+            element.appendChild(option);
         }
     }
 
@@ -144,11 +162,19 @@ class CommentWidget {
      * Fetch comments from server and display them in #comments
      */
     async load() {
-        const amount = getSelectValue("commentAmount");
-        const order = getSelectValue("commentOrder");
         const currentRequestId = ++this.requestId;
 
-        const comments = await fetch(`/commentList?amount=${amount}&order=${order}`);
+        const amount = getSelectValue("commentAmount");
+        const order = getSelectValue("commentOrder");
+        const translateInto = getSelectValue("translateInto");
+
+        let uri = `/commentList?amount=${amount}&order=${order}`;
+
+        if (translateInto !== "null") {
+            uri += `&translateInto=${translateInto}`;
+        }
+
+        const comments = await fetch(uri);
         if (this.requestId === currentRequestId) {
             // request wasn't interrupted by another call to loadComments()
             this.renderComments(await comments.json());
@@ -248,4 +274,5 @@ async function updateAuthInfo() {
 async function init() {
     const comments = new CommentWidget(await updateAuthInfo());
     await comments.load();
+    await comments.loadLanguages();
 }

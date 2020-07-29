@@ -89,7 +89,7 @@ public class CommentListServlet extends HttpServlet {
         KeyFactory.keyToString(entity.getKey()),
         (String)entity.getProperty("author"),
         (String)entity.getProperty("authorId"),
-        Translator.translate((String)entity.getProperty("text"), translateInto),
+        new Translator().translate((String)entity.getProperty("text"), translateInto),
         Instant.ofEpochMilli((long)entity.getProperty("timestamp"))
       ));
     }
