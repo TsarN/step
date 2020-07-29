@@ -35,6 +35,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.sps.Comment;
 import com.google.sps.SafeParser;
+import com.google.sps.Translator;
 
 /** Servlet that returns comments. */
 @WebServlet("/commentList")
@@ -55,6 +56,10 @@ public class CommentListServlet extends HttpServlet {
 
     String order = request.getParameter("order");
 
+    if (order == null) {
+      order = "newest";
+    }
+
     switch (order) {
       case "oldest": // oldest first
         query.addSort("timestamp", SortDirection.ASCENDING);
@@ -69,6 +74,8 @@ public class CommentListServlet extends HttpServlet {
         return;
     }
 
+    String translateInto = request.getParameter("translateInto");
+
     PreparedQuery results = datastore.prepare(query);
     
     List<Comment> comments = new ArrayList<>();
@@ -82,7 +89,7 @@ public class CommentListServlet extends HttpServlet {
         KeyFactory.keyToString(entity.getKey()),
         (String)entity.getProperty("author"),
         (String)entity.getProperty("authorId"),
-        (String)entity.getProperty("text"),
+        Translator.translate((String)entity.getProperty("text"), translateInto),
         Instant.ofEpochMilli((long)entity.getProperty("timestamp"))
       ));
     }
