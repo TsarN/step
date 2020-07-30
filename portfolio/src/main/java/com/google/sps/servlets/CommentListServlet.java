@@ -31,10 +31,13 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.cloud.translate.Translate;
+import com.google.cloud.translate.TranslateException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.sps.Comment;
 import com.google.sps.SafeParser;
+import com.google.sps.Translator;
 
 /** Servlet that returns comments. */
 @WebServlet("/commentList")
@@ -55,6 +58,10 @@ public class CommentListServlet extends HttpServlet {
 
     String order = request.getParameter("order");
 
+    if (order == null) {
+      order = "newest";
+    }
+
     switch (order) {
       case "oldest": // oldest first
         query.addSort("timestamp", SortDirection.ASCENDING);
@@ -69,20 +76,33 @@ public class CommentListServlet extends HttpServlet {
         return;
     }
 
+    String translateInto = request.getParameter("translateInto");
+
     PreparedQuery results = datastore.prepare(query);
     
     List<Comment> comments = new ArrayList<>();
+
+    Translator translator = new Translator();
 
     for (Entity entity : results.asIterable()) {
       if (comments.size() == amount) {
         break;
       }
 
+      String text = (String) entity.getProperty("text");
+
+      try {
+        text = translator.translate(text, translateInto);
+      } catch (TranslateException exception) {
+        response.sendError(exception.getCode(), "translation error: " + exception.getMessage());
+        return;
+      }
+
       comments.add(new Comment(
         KeyFactory.keyToString(entity.getKey()),
         (String)entity.getProperty("author"),
         (String)entity.getProperty("authorId"),
-        (String)entity.getProperty("text"),
+        text,
         Instant.ofEpochMilli((long)entity.getProperty("timestamp"))
       ));
     }
