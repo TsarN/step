@@ -113,7 +113,6 @@ public final class FindMeetingQuery {
       int segmentEnd = point.getTime();
 
       if (blockers == 0) {
-        int duration = segmentEnd - segmentStart;
         if (optionalAttendees >= minOptionalAttendees) {
           result.add(TimeRange.fromStartEnd(segmentStart, segmentEnd, false));
         }
