@@ -39,24 +39,12 @@ public final class FindMeetingQuery {
       return event;
     }
 
-    public void setEvent(Event event) {
-      this.event = event;
-    }
-
     public int getTime() {
       return time;
     }
 
-    public void setTime(int time) {
-      this.time = time;
-    }
-
     public boolean isStart() {
       return start;
-    }
-
-    public void setStart(boolean start) {
-      this.start = start;
     }
 
     public static int compare(TimePoint lhs, TimePoint rhs) {
