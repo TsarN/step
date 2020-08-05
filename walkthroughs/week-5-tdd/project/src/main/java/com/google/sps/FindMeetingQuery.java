@@ -25,14 +25,18 @@ public final class FindMeetingQuery {
    * A point in time that is some event's start or end.
    */
   private static class TimePoint {
+    public enum Kind {
+      Start, End
+    }
+
     private Event event;
     private int time;
-    private boolean start;
+    private Kind kind;
 
-    public TimePoint(Event event, int time, boolean start) {
+    public TimePoint(Event event, int time, Kind kind) {
       this.event = event;
       this.time = time;
-      this.start = start;
+      this.kind = kind;
     }
 
     public Event getEvent() {
@@ -43,8 +47,8 @@ public final class FindMeetingQuery {
       return time;
     }
 
-    public boolean isStart() {
-      return start;
+    public Kind getKind() {
+      return kind;
     }
 
     public static int compare(TimePoint lhs, TimePoint rhs) {
@@ -56,11 +60,11 @@ public final class FindMeetingQuery {
         return 1;
       }
 
-      if (!lhs.isStart() && rhs.isStart()) {
+      if (lhs.getKind() == Kind.End && rhs.getKind() == Kind.Start) {
         return -1;
       }
 
-      if (lhs.isStart() && !rhs.isStart()) {
+      if (lhs.getKind() == Kind.Start && rhs.getKind() == Kind.End) {
         return 1;
       }
 
@@ -107,7 +111,7 @@ public final class FindMeetingQuery {
       }
 
       if (point.getEvent() != null) {
-        if (point.isStart()) {
+        if (point.getKind() == TimePoint.Kind.Start) {
           for (String attendee : point.getEvent().getAttendees()) {
             if (request.getAttendees().contains(attendee)) {
               ++blockers;
@@ -143,11 +147,11 @@ public final class FindMeetingQuery {
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
     List<TimePoint> points = new ArrayList<>();
 
-    points.add(new TimePoint(null, TimeRange.WHOLE_DAY.end(), false));
+    points.add(new TimePoint(null, TimeRange.WHOLE_DAY.end(), TimePoint.Kind.End));
 
     for (Event event : events) {
-      points.add(new TimePoint(event, event.getWhen().start(), true));
-      points.add(new TimePoint(event, event.getWhen().end(), false));
+      points.add(new TimePoint(event, event.getWhen().start(), TimePoint.Kind.Start));
+      points.add(new TimePoint(event, event.getWhen().end(), TimePoint.Kind.End));
     }
 
     points.sort(TimePoint::compare);
